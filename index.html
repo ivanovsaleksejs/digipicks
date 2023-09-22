@@ -8,7 +8,20 @@ const config = {
     [4, 5],
     [4, 5],
     [5, 7]
-  ]
+  ],
+  keyNames: {
+    16: "Shift",
+    17: "Ctrl",
+    18: "Alt",
+    91: "Win",
+    225: "Alt Gr"
+  },
+  arrows: {
+    37: "&#8592;",
+    38: "&#8593;",
+    39: "&#8594;",
+    40: "&#8595;"
+  }
 }
 
 const rnd = seed => (
@@ -278,15 +291,37 @@ const stopAnimateCorrect = next => event => {
 }
 
 const showLostMessage = _ => {
-  let popup = openPopup("&#128577;", `Better luck next time!`)
+  let popup = openPopup("&#128577;", `Better luck next time!`, endgameButtons())
 }
 
 const showSuccessMessage = _ => {
   let picksUsed = config.pickCount[state.difficulty-1] - state.pickCount
-  let popup = openPopup("&#128578;", `Congratulations! Failed attempts: ${picksUsed}`)
+  let popup = openPopup("&#128578;", `Congratulations! Failed attempts: ${picksUsed}`, endgameButtons())
 }
 
-const openPopup = (sign, text) => {
+const endgameButtons = _ => {
+  let buttons = createNode('div', {className: 'popup-buttons'})
+
+  let tryAgain = createNode('button', {className: 'popup-button'})
+  tryAgain.innerText = 'Try again'
+  tryAgain.addEventListener('click', _ => {
+    closePopup()
+    initGame()
+  })
+  buttons.appendChild(tryAgain)
+
+  let newGame = createNode('button', {className: 'popup-button'})
+  newGame.innerText = 'New game'
+  newGame.addEventListener('click', _ => {
+    closePopup()
+    document.querySelector('#randomseed').dispatchEvent((new Event('click')))
+  })
+  buttons.appendChild(newGame)
+
+  return buttons
+}
+
+const openPopup = (sign, text, buttons) => {
   let game = document.querySelector('.game')
   let popup = createNode('div', {className: 'popup'})
 
@@ -305,42 +340,25 @@ const openPopup = (sign, text) => {
   message.appendChild(textNode)
   popup.appendChild(message)
 
-  let buttons = createNode('div', {className: 'popup-buttons'})
-
-  let tryAgain = createNode('button', {className: 'popup-button'})
-  tryAgain.innerText = 'Try again'
-  tryAgain.addEventListener('click', _ => {
-    closePopup()
-    initGame()
-  })
-  buttons.appendChild(tryAgain)
-
-  let newGame = createNode('button', {className: 'popup-button'})
-  newGame.innerText = 'New game'
-  newGame.addEventListener('click', _ => {
-    closePopup()
-    document.querySelector('#randomseed').dispatchEvent((new Event('click'))) 
-  })
-  buttons.appendChild(newGame)
-
   popup.appendChild(buttons)
 
   game.appendChild(popup)
   return popup
 }
 
-const closePopup = _ => document.querySelector('.popup').remove()
+const closePopup = _ => {
+  state.binding = false
+  document.querySelector('.popup').remove()
+}
 
 const undo = _ => {
   if (state.history.length > 0) {
     state.pickCount--
     if (state.pickCount > 0) {
       let prev = state.history.pop()
-      console.log(prev)
       state.patterns = prev.patterns
       state.picks = prev.picks
       redraw()
-      console.log("what")
     }
     else {
       showLostMessage()
@@ -348,8 +366,39 @@ const undo = _ => {
   }
 }
 
-const applyBindings = _ => {
+const showBindingPopup = e => {
+  let command =e.target.htmlFor ? e.target.htmlFor : e.target.id
 
+  let buttons = createNode('div', {className: 'popup-buttons'})
+  let cancel = createNode('button', {className: 'popup-button'})
+  cancel.innerText = 'Cancel'
+  cancel.addEventListener('click', closePopup)
+  buttons.appendChild(cancel)
+  state.binding = true
+  state.bindingCommand = command
+  openPopup('', 'Press a key or combination', buttons)
+}
+
+const applyBinding = event => {
+  let bind = {
+    key: event.keyCode,
+    ctrlKey: event.ctrlKey,
+    altKey: event.altKey,
+    shiftKey: event.shiftKey,
+    metaKey: event.metaKey,
+    method: state.commands[state.bindingCommand].method
+  }
+  state.commands[state.bindingCommand] = bind
+  let keyName = (event.ctrlKey ? "Ctrl + " : '') +
+    (event.altKey ? "Alt + " : '') +
+    (event.shiftKey ? "Shift + " : '') +
+    (event.metaKey ? "Cmd + " : '') +
+    (config.arrows[event.keyCode] ? config.arrows[event.keyCode] : String.fromCharCode(event.keyCode))
+
+  document.querySelector('.binding#' + state.bindingCommand).innerHTML = keyName
+  state.binding = false
+  state.bindingCommand = null
+  closePopup()
 }
 
 const initGame = _ => {
@@ -382,21 +431,33 @@ const state = {}
 window.addEventListener("load", _ => {
 
   state.commands = {
-    "rccw": rotateActivePick.bind(null, false),
-    "rcw": rotateActivePick.bind(null, true),
-    "prev": browsePicks.bind(null, false),
-    "next": browsePicks.bind(null, true),
-    "use": attemptPick,
-    "undo": undo
+    "rccw": {
+      method: rotateActivePick.bind(null, true),
+      key: 65
+    },
+    "rcw": {
+      method: rotateActivePick.bind(null, false),
+      key: 68
+    },
+    "prev": {
+      method: browsePicks.bind(null, false),
+      key: 37
+    },
+    "next": {
+      method: browsePicks.bind(null, true),
+      key: 39
+    },
+    "use": {
+      method: attemptPick,
+      key: 69
+    },
+    "undo": {
+      method: undo,
+      key: 90,
+      ctrlKey: true
+    }
   }
-  state.bindings = {
-    65: "rcw",
-    68: "rccw",
-    37: "prev",
-    39: "next",
-    69: "use",
-    90: "undo"
-  }
+
   document.querySelector('#seed').addEventListener('change', initGame)
   document.querySelector('fieldset').addEventListener('change', initGame)
 
@@ -408,20 +469,37 @@ window.addEventListener("load", _ => {
 
   document.querySelector('.picks').addEventListener('click', clickOnPick)
 
+  document.querySelector('.bindings').addEventListener('click', showBindingPopup)
+
   initGame()
 })
 
 window.addEventListener("keydown", event =>
   {
-    let handled = false
-    if (binding = state.bindings[event.keyCode]) {
-      console.log(state.bindings[event.keyCode])
-      state.commands[binding]()
-      handled = true
+    if (state.binding) {
+      if (!config.keyNames[event.keyCode]) {
+        applyBinding(event)
+        event.preventDefault()
+      }
     }
+    else {
+      let handled = false
+      if ((command = Object.entries(state.commands).filter(c => c[1].key == event.keyCode)).length) {
+        command = command[0][1]
+        if (
+          event.ctrlKey == !!command.ctrlKey &&
+          event.shiftKey == !!command.shiftKey &&
+          event.altKey == !!command.altKey &&
+          event.metaKey == !!command.metaKey
+        ) {
+          command.method()
+          handled = true
+        }
+      }
 
-    if (handled) {
-      event.preventDefault()
+      if (handled) {
+        event.preventDefault()
+      }
     }
   },
   true
