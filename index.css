@@ -1,0 +1,271 @@
+:root {
+  --cyan: #9FBDB2;
+  --dark-cyan: #5C6E68;
+  --dark: #060508;
+  --success: #297D33;
+  --fail: #CA4646;
+  --speed: .25s;
+}
+body {
+  background: var(--dark);
+    font-family: sans-serif;
+}
+.header {
+  display: flex;
+}
+.settings {
+  border: 1px solid var(--cyan);
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  padding: 0.6em;
+}
+.settings fieldset {
+  display: flex;
+  flex-direction: column;
+  border: 0 none;
+}
+input[type="radio"] {
+    border: 1px solid var(--dark-cyan);
+    color: var(--cyan);
+    accent-color: var(--cyan);
+    transform: scale(1.5);
+    margin: 0.6em 0.5em;
+}
+label {
+  color: var(--cyan);
+}
+.bindings {
+  padding: 1em;
+  display: flex;
+}
+.bindings .column {
+  padding: 0 0.3em;
+}
+.bindings .column > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4em;
+}
+.binding {
+  width: 4em;
+  height: 2.5em;
+  border-radius: 0.3em;
+  border: 1px solid var(--cyan);
+  background: var(--dark-cyan);
+  text-align: center;
+  color: var(--cyan);
+  margin-right: 0.5em;
+  font-size: 1.05em;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.game {
+  padding: 2em;
+  display: flex;
+  overflow: hidden;
+}
+.lock {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.lock.top {
+  width: 25em;
+  height: 25em;
+  margin: 3em;
+}
+.lock-outer {
+  display: inline-block;
+  overflow: hidden;
+}
+.lock-outer > div {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.lock-outer-circle, .pick-outer-circle {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  background: var(--cyan);
+  border-radius: 50%;
+}
+.segment {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vw;
+  background: var(--dark);
+  transform-origin: 0 0;
+  z-index: 0;
+}
+.lock-inner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 90%;
+  height: 90%;
+  transform: translateX(-50%) translateY(-50%);
+  background: var(--dark);
+  border-radius: 50%;
+  z-index: 1;
+}
+.lock-inner .lock {
+  opacity: 0.55;
+}
+.picks {
+  display: flex;
+  max-width: 40em;
+  flex-wrap: wrap;
+}
+.picks > div {
+  width: 10em;
+  height: 10em;
+  position: relative;
+  cursor: pointer;
+}
+.pick-outer {
+  display: inline-block;
+}
+.pick {
+  opacity: 0.4;
+}
+.lock.top .pick {
+  opacity: 1;
+}
+.pick.active {
+  opacity: 1;
+}
+.picks .lock-outer-circle, .pick > div > .lock-outer-circle {
+  background: var(--dark);
+  border-width: 3px;
+  border-color: var(--cyan);
+  border-style: dotted;
+  width: 90%;
+  height: 90%;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+}
+.picks .lock-outer-circle, .pick > div > .lock-outer-circle.wrong {
+  border-color: var(--fail);
+  border-width: 5px;
+}
+.picks .lock-outer-circle, .pick > div > .lock-outer-circle.correct {
+  border-color: var(--success);
+  border-width: 5px;
+}
+.lock-outer.pick > div {
+  overflow: hidden;
+  position: absolute;
+  width: 97%;
+  height: 97%;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.picks .segment, .pick > div > .lock-outer-circle > .segment {
+  background: var(--cyan);
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+}
+.picks .segment, .pick > div > .lock-outer-circle.wrong > .segment {
+  background: var(--fail);
+}
+.picks .segment, .pick > div > .lock-outer-circle.correct > .segment {
+  background: var(--success);
+}
+.picks .lock-inner {
+  width: 80%;
+  height: 80%;
+}
+.pick-outer-circle {
+}
+.popup {
+  position: absolute;
+  left: 20%;
+  top: 20%;
+  background: var(--dark);
+  border: 1px solid var(--cyan);
+  padding: 4em;
+  border-radius: 0.5em;
+  z-index: 2;
+}
+.popup-message {
+  color: var(--cyan);
+  margin: 1em 0;
+  display: flex;
+  align-items: center;
+}
+.popup-icon {
+  font-size: 2em;
+  margin-right: 1em;
+}
+.popup-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 1em 0;
+}
+button.popup-button, button#randomseed {
+  border: 1px solid var(--cyan);
+  background: var(--cyan);
+  padding: 0.8em 2em;
+  border-radius: 0.2em;
+  cursor: pointer;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+  color: var(--dark);
+}
+button.popup-button:hover {
+  background: var(--dark-cyan);
+}
+.popup-close {
+  position: absolute;
+  color: var(--cyan);
+  top: 0;
+  right: 0;
+  padding: 0.5em;
+  font-size: 1.3em;
+  cursor: pointer;
+}
+.popup-close::after {
+  content: "\2715";
+}
+.attempts {
+  color: var(--cyan);
+  padding: 2em;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.picks-left {
+  border: 1px solid var(--cyan);
+  background: var(--dark-cyan);
+  color: var(--cyan);
+  padding: 0.2em 0.4em;
+  margin-left: 1em;
+  border-radius: 0.2em;
+}
+input#seed {
+  border: 1px solid var(--dark-cyan);
+  background: var(--cyan);
+  color: var(--dark-cyan);
+  padding: 0.2em;
+  font-size: 1.2em;
+}
