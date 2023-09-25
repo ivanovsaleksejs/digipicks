@@ -464,6 +464,10 @@ window.addEventListener("load", _ => {
     initGame()
   })
 
+  document.querySelector('#rotate_ccw').addEventListener('click', state.commands.rccw.method)
+  document.querySelector('#rotate_cw').addEventListener('click', state.commands.rcw.method)
+  document.querySelector('#button_use').addEventListener('click', state.commands.use.method)
+
   document.querySelector('.picks').addEventListener('click', clickOnPick)
 
   document.querySelector('.bindings').addEventListener('click', showBindingPopup)

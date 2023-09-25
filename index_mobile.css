@@ -1,0 +1,40 @@
+@media screen and (max-width: 1279px) {
+  .game {
+    flex-direction: column;
+    position: relative;
+    padding: 0;
+    align-items: center;
+  }
+  .lock.top {
+    width: 85vw;
+    height: 85vw;
+    margin: 2em;
+  }
+  .picks {
+    max-width: 90vw;
+    width: 90vw;
+  }
+  .picks > div {
+    width: 30vw;
+    height: 30vw;
+  }
+  .picks .lock-outer-circle, .pick > div > .lock-outer-circle {
+    border-width: 5px;
+  }
+  .bindings {
+    display: none;
+  }
+  button.rotate {
+    width: 9vw;
+    padding: 0;
+    height: 9vw;
+    font-size: 2.6em;
+    font-weight: bold;
+  }
+  .rotate-buttons {
+    width: 100%;
+    position: initial;
+    justify-content: space-around;
+    margin-bottom: 4vw;
+  }
+}
