@@ -1,4 +1,8 @@
 @media screen and (max-width: 1279px) {
+  body {
+    display: flex;
+    flex-direction: column-reverse;
+  }
   .game {
     flex-direction: column;
     position: relative;
@@ -13,6 +17,7 @@
   .picks {
     max-width: 90vw;
     width: 90vw;
+    margin-bottom: 2em;
   }
   .picks > div {
     width: 30vw;
@@ -25,15 +30,30 @@
     display: none;
   }
   button.rotate {
-    width: 9vw;
+    width: 15vw;
     padding: 0;
-    height: 9vw;
-    font-size: 2.6em;
+    height: 15vw;
+    font-size: 1.6em;
   }
   .rotate-buttons {
     width: 100%;
     position: initial;
     justify-content: space-around;
     margin-bottom: 4vw;
+  }
+  .popup {
+    left: 0;
+    width: 96vw;
+    padding: 0;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+  .popup-buttons {
+    justify-content: space-around;
+    width: 90%;
+  }
+  .popup-close {
+    font-size: 1.7em;
   }
 }
