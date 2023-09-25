@@ -14,23 +14,29 @@ body {
   display: flex;
 }
 .settings {
-  border: 1px solid var(--cyan);
   display: flex;
   flex-direction: column;
   width: max-content;
-  padding: 0.6em;
 }
-.settings fieldset {
+fieldset {
+  border: 1px solid var(--cyan);
   display: flex;
   flex-direction: column;
-  border: 0 none;
+}
+fieldset legend {
+  background: var(--cyan);
+  color: var(--dark);
+  padding: 0.2em 0.5em;
+  border: 2px solid var(--dark);
+  border-width: 0 0.3em;
+  border-radius: 0.3em;
 }
 input[type="radio"] {
-    border: 1px solid var(--dark-cyan);
-    color: var(--cyan);
-    accent-color: var(--cyan);
-    transform: scale(1.5);
-    margin: 0.6em 0.5em;
+  border: 1px solid var(--dark-cyan);
+  color: var(--cyan);
+  accent-color: var(--cyan);
+  transform: scale(1.5);
+  margin: 0.6em 0.5em;
 }
 label {
   color: var(--cyan);
@@ -38,6 +44,7 @@ label {
 .bindings {
   padding: 1em;
   display: flex;
+  flex-direction: row;
 }
 .bindings .column {
   padding: 0 0.3em;
@@ -51,10 +58,10 @@ label {
   width: 4em;
   height: 2.5em;
   border-radius: 0.3em;
-  border: 1px solid var(--cyan);
-  background: var(--dark-cyan);
+  border: 1px solid var(--dark-cyan);
+  background: var(--cyan);
   text-align: center;
-  color: var(--cyan);
+  color: var(--dark);
   margin-right: 0.5em;
   font-size: 1.05em;
   align-items: center;
@@ -255,17 +262,46 @@ button.popup-button:hover {
   justify-content: space-between;
 }
 .picks-left {
-  border: 1px solid var(--cyan);
-  background: var(--dark-cyan);
-  color: var(--cyan);
+  border: 1px solid var(--dark-cyan);
+  background: var(--cyan);
+  color: var(--dark);
   padding: 0.2em 0.4em;
   margin-left: 1em;
   border-radius: 0.2em;
 }
 input#seed {
-  border: 1px solid var(--dark-cyan);
-  background: var(--cyan);
-  color: var(--dark-cyan);
-  padding: 0.2em;
-  font-size: 1.2em;
+  border: 1px solid var(--cyan);
+  background: var(--dark-cyan);
+  color: var(--cyan);
+  padding: 0 0.6em;
+  line-height: 2.5em;
+  font-size: 1em;
+  border-radius: 0.3em;
+}
+input#seed::-webkit-inner-spin-button {
+  opacity: 0.4;
+  background: var(--dark-cyan);
+  color: var(--cyan);
+  cursor: pointer;
+  -webkit-appearance: none !important;
+  width: 1.5em;
+  height: 2.5em;
+  outline: none;
+  background-image: url('data:image/svg+xml;utf8,%3Csvg%20version%3D%221.1%22%20viewBox%3D%220%200%2045%2067%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20stroke-width%3D%222%22%3E%3Cline%20x1%3D%2215%22%20x2%3D%2240%22%20y1%3D%2233.5%22%20y2%3D%2233.5%22%20stroke%3D%22%239FBDB2%22%2F%3E%3Cpolyline%20transform%3D%22translate(30%2020)%20rotate(45)%20translate(-25%20-20)%22%20points%3D%2219%2032%2019%2017%2034%2017%22%20stroke%3D%22%239FBDB2%22%2F%3E%3Cpolyline%20transform%3D%22translate(25%2047)%20rotate(225)%20translate(-25%20-45)%22%20points%3D%2219%2058%2019%2043%2034%2043%22%20stroke%3D%22%239FBDB2%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+  background-position: center right;
+  background-size: contain;
+  background-repeat: no-repeat;
+  caret-color: transparent;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+}
+input#seed::-webkit-inner-spin-button:hover {
+  opacity: 1;
+}
+.number-arrow {
+  stroke: var(--cyan);
+  stroke-width: 2;
+  fill: none;
 }

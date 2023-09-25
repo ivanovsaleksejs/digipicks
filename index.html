@@ -5,33 +5,33 @@
 </head>
 <body>
   <div class="header">
-    <div class="settings">
+    <fieldset class="settings">
+      <legend>Game settings</legend>
       <label>Difficulty:</label>
-      <fieldset>
-        <div>
-          <input type="radio" id="novice" name="difficulty" value="1" checked></input>
-          <label for="novice">Novice</label>
-        </div>
-        <div>
-          <input type="radio" id="advanced" name="difficulty" value="2"></input>
-          <label for="advanced">Advanced</label>
-        </div>
-        <div>
-          <input type="radio" id="expert" name="difficulty" value="3"></input>
-          <label for="expert">Expert</label>
-        </div>
-        <div>
-          <input type="radio" id="master" name="difficulty" value="4"></input>
-          <label for="master">Master</label>
-        </div>
-      </fieldset>
+      <div>
+        <input type="radio" id="novice" name="difficulty" value="1" checked></input>
+        <label for="novice">Novice</label>
+      </div>
+      <div>
+        <input type="radio" id="advanced" name="difficulty" value="2"></input>
+        <label for="advanced">Advanced</label>
+      </div>
+      <div>
+        <input type="radio" id="expert" name="difficulty" value="3"></input>
+        <label for="expert">Expert</label>
+      </div>
+      <div>
+        <input type="radio" id="master" name="difficulty" value="4"></input>
+        <label for="master">Master</label>
+      </div>
       <label for="seed">Seed:</label>
       <div class="seed">
         <input type="number" id="seed" value="1" min="1" max="2147483647">
         <button id="randomseed">Randomize</button>
       </div>
-    </div>
-    <div class="bindings">
+    </fieldset>
+    <fieldset class="bindings">
+      <legend>Key bindings (click to change)</legend>
       <div class="column">
         <div>
           <div class="binding" id="rccw">A</div><label for="rccw">Rotate counter-clockwise</label>
@@ -54,10 +54,13 @@
           <div class="binding" id="undo">Ctrl+Z</div><label for="undo">Undo</label>
         </div>
       </div>
-    </div>
-    <div class="attempts">
-      <p>Picks left: </p><div class="picks-left"></div>
-    </div>
+    </fieldset>
+    <fieldset>
+      <legend>Stats</legend>
+      <div class="attempts">
+        <p>Picks left: </p><div class="picks-left"></div>
+      </div>
+    </fieldset>
   </div>
   <div class="game">
     <div class="lock top"></div>
