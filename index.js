@@ -21,6 +21,56 @@ const config = {
   }
 }
 
+const texts = {
+  "tutorhead": "Welcome to the lockpicking game!",
+  "tutor1": "This game is inspired by the lockpicking minigame in Starfield by Bethesda Game Studios.",
+  "tutor2": "If you are familiar with that minigame or with this game, or if you feel confident, then you can skip this tutorial and start playing.",
+  "tutornext": "Next",
+  "tutorskip": "Skip",
+  "tutorend": "Got it!",
+  "tutorlockhead": "This is the lock that you have to unlock",
+  "tutorlock1": "It has multiple layers depending on difficulty. You need to unlock all of them in order.",
+  "tutorlock2": "The outside (dashed) ring represents the currently selected pick. Use your keyboard or click buttons below lock to rotate it.",
+  "tutorlock3": "Rotate pick so it fits with gaps on the outer ring. Once it is in a correct position, apply it using keyboard or click on a button below lock.",
+  "tutorlock4": "If you use it in the wrong position, then it will fail, in which case, the number of attempts decreases.",
+  "tutorpickshead": "These are the picks you can use",
+  "tutorpicks1": "Picks are shuffled and rotated randomly.",
+  "tutorpicks2": "Move between them using keyboard, or you can simply click or tap on the pick that you want to use.",
+  "tutorpicks3": "Once you've chosen the pick, rotate it to fit in gaps and then apply it. Each layer will require at least two picks to unlock it.",
+  "tutorpicks4": "It's recommended to use a pick only after you are sure that you have all the picks to unlock the layer.",
+  "tutorpicks5": "If, when solving, you've realized that you used the wrong pick before, you can go back one step. In this case, the number of attempts decreases.",
+  "tutorsettingshead": "These are game settings",
+  "tutorsettings1": "The difficulty level defines how many layers you need to unlock - 2 for Novice and Advanced, 3 for Expert and 4 for Master.",
+  "tutorsettings2": "For Novice, all picks should be used. For Advanced, Expert and Master there are extra picks that make your job harder and should not be used. You'll need to figure out by yourself what picks to use",
+  "tutorsettings3": "The seed field defines unique game. You can randomize seed and later share it with friends",
+  "tutorsettings4": "If you play on the computer then you'll see the keybinding block. You can change key bingings for all interactions if you want.",
+  "tutorsettings5": "At the right side you can see how many attempts you have left. This number decreases when you do a mistake or if you go one step back.",
+  "tutorendhead": "You're ready to go!",
+  "tutorend1": "Hope you'll enjoy playing. GLHF!"
+}
+
+const tutorialSolve = [
+  ['rcw', 200],
+  ['rcw', 400],
+  ['rccw', 200],
+  ['rccw', 200],
+  ['rccw', 500],
+  ['rccw', 200],
+  ['rccw', 100],
+  ['rccw', 200],
+  ['rccw', 200],
+  ['rccw', 200],
+  ['use', 500]
+]
+
+const tutorialMove = [
+  ['next', 300],
+  ['next', 400],
+  ['prev', 500],
+  ['next', 200],
+  ['next', 300],
+]
+
 const rnd = seed => (
   rndstate = seed,
   _ => (
@@ -54,9 +104,12 @@ const rotate = (l, r) => [...l.slice(r), ...l.slice(0, r)]
 
 const pickRandom = l => l[Math.floor(state.rand() * l.length)]
 
-const createNode = (name = 'div', props = {}) => {
+const createNode = (name = 'div', props = {}, listeners = {}) => {
   let node = document.createElement(name)
   Object.assign(node, props)
+  for (let [event, [listener, options]] of Object.entries(listeners)) {
+    node.addEventListener(event, listener, options)
+  }
   return node
 }
 
@@ -92,7 +145,7 @@ const drawLock = (lock, pattern) => {
 const drawPick = pick => {
   let pickNode = createNode('div', {className: "lock-outer pick"})
 
-  let pickNodeCircle = createNode('div', {className: 'lock-outer-circle'})
+  let pickNodeCircle = createNode('div', {className: 'lock-outer-circle' + (pick.used ? ' disabled' : '')})
 
   if (!pick.used) {
     addSegments(pickNodeCircle, rotate(turnBits(pick.pick), pick.rotation), true)
@@ -299,20 +352,24 @@ const showSuccessMessage = _ => {
 const endgameButtons = _ => {
   let buttons = createNode('div', {className: 'popup-buttons'})
 
-  let tryAgain = createNode('button', {className: 'popup-button'})
-  tryAgain.innerText = 'Try again'
-  tryAgain.addEventListener('click', _ => {
-    closePopup()
-    initGame()
-  })
+  let tryAgain = createNode('button', {className: 'popup-button', innerText: "Try again"},
+    {
+      'click': [_ => {
+        closePopup()
+        initGame()
+      }, {}]
+    }
+  )
   buttons.appendChild(tryAgain)
 
-  let newGame = createNode('button', {className: 'popup-button'})
-  newGame.innerText = 'New game'
-  newGame.addEventListener('click', _ => {
-    closePopup()
-    document.querySelector('#randomseed').dispatchEvent((new Event('click')))
-  })
+  let newGame = createNode('button', {className: 'popup-button', innerText: "New game"},
+    {
+      'click': [_ => {
+        closePopup()
+        document.querySelector('#randomseed').dispatchEvent((new Event('click')))
+      }, {}]
+    }
+  )
   buttons.appendChild(newGame)
 
   return buttons
@@ -322,15 +379,16 @@ const openPopup = (sign, text, buttons) => {
   let game = document.querySelector('.game')
   let popup = createNode('div', {className: 'popup'})
 
-  let popupClose = createNode('div', {className: 'popup-close'})
-  popupClose.addEventListener('click', closePopup)
+  let popupClose = createNode('div', {className: 'popup-close'},
+    {
+      'click': [closePopup, {}]
+    }
+  )
   popup.appendChild(popupClose)
 
-  let icon = createNode('div', {className: 'popup-icon'})
-  icon.innerHTML = sign
+  let icon = createNode('div', {className: 'popup-icon', innerHTML: sign})
 
-  let textNode = createNode('div')
-  textNode.innerText = text
+  let textNode = createNode('div', {innerText: text})
 
   let message = createNode('div', {className: 'popup-message'})
   message.appendChild(icon)
@@ -367,9 +425,11 @@ const showBindingPopup = e => {
   let command =e.target.htmlFor ? e.target.htmlFor : e.target.id
 
   let buttons = createNode('div', {className: 'popup-buttons'})
-  let cancel = createNode('button', {className: 'popup-button'})
-  cancel.innerText = 'Cancel'
-  cancel.addEventListener('click', closePopup)
+  let cancel = createNode('button', {className: 'popup-button', innerText: "Cancel"},
+    {
+      'click': [closePopup, {}]
+    }
+  )
   buttons.appendChild(cancel)
   state.binding = true
   state.bindingCommand = command
@@ -413,14 +473,197 @@ const initGame = _ => {
 
 const clickOnPick = e => {
   let target = e.target
+  
   while (!target.classList.contains('pick')) {
     if (target.classList.contains('picks')) {
       return
     }
     target = target.parentNode
   }
-  state.activePick = [...target.closest(".picks").children].indexOf(target.parentNode)
-  redraw()
+
+  let selectedPick = [...target.closest(".picks").children].indexOf(target.parentNode)
+  if (!state.picks[selectedPick].used) {
+    state.activePick = [...target.closest(".picks").children].indexOf(target.parentNode)
+    redraw()
+  }
+}
+
+const tutorialButtons = (tutor, nextPhase) => {
+  let tutorbuttons = createNode('div', {className: 'tutorbuttons'})
+  let tutornext = createNode('button', {className: 'tutor-button', innerText: texts.tutornext},
+    {
+      'click': [nextPhase, {once: true}]
+    }
+  )
+  tutorbuttons.appendChild(tutornext)
+  let tutorskip = createNode('a', {className: 'tutor-link', innerText: texts.tutorskip},
+    {
+      'click': [skipTutorial(tutor), {}]
+    }
+  )
+  tutorbuttons.appendChild(tutorskip)
+  return tutorbuttons
+}
+
+const showTutorial = _ => {
+  state.tutorialActive = true
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.add('blurred'))
+  let tutor = createNode('div', {className: 'tutorial intro hidden'})
+  let tutorhead = createNode('h1', {innerText: texts.tutorhead})
+  tutor.appendChild(tutorhead)
+
+  let tutor1 = createNode('p', {innerText: texts.tutor1})
+  tutor.appendChild(tutor1)
+  let tutor2 = createNode('p', {innerText: texts.tutor2})
+  tutor.appendChild(tutor2)
+
+  tutor.appendChild(tutorialButtons(tutor, showTutorialLock(tutor)))
+  setTimeout(_ => tutor.classList.remove('hidden'), 10)
+
+  document.body.appendChild(tutor)
+}
+
+const showTutorialLock = tutor => _ => {
+  tutor.addEventListener('transitionend', _ => tutor.remove())
+  setTimeout(_ => tutor.classList.add('hidden'), 10)
+  document.querySelectorAll('.lock.top, .rotate-buttons').forEach(e => e.classList.remove('blurred'))
+
+  let tutorLock = createNode('div', {className: 'tutorial tutorlock hidden'})
+
+  let tutorhead = createNode('h1', {innerText: texts.tutorlockhead})
+  tutorLock.appendChild(tutorhead)
+
+  let tutorDesc = createNode('div')
+
+  let tutor1 = createNode('p', {innerText: texts.tutorlock1})
+  tutorDesc.appendChild(tutor1)
+  let tutor2 = createNode('p', {innerText: texts.tutorlock2})
+  tutorDesc.appendChild(tutor2)
+  tutorLock.appendChild(tutorDesc)
+
+  tutorLock.appendChild(tutorialButtons(tutorLock, showTutorialLockPick(tutorLock, tutorDesc)))
+
+  setTimeout(_ => tutorLock.classList.remove('hidden'), 10)
+  document.body.appendChild(tutorLock)
+}
+
+const showTutorialLockPick = (tutorLock, tutorDesc) => _ => {
+  let tutor3 = createNode('p', {innerText: texts.tutorlock3})
+  tutorDesc.appendChild(tutor3)
+  let f = (timeout, i = 0) => _ => {
+    if (t = tutorialSolve[i] ?? null) {
+      state.commands[t[0]].method()
+      timeout.t = setTimeout(f(timeout, i + 1), t[1])
+    }
+  }
+  let timeout = {t: null}
+  timeout.t = f(timeout)()
+  tutorLock.querySelector('.tutor-button').addEventListener('click', showTutorialPicks(tutorLock, timeout), {once: true})
+}
+
+const showTutorialPicks = (tutorLock, timeout) => _ => {
+  clearTimeout(timeout.t)
+  tutorLock.addEventListener('transitionend', _ => tutorLock.remove())
+  setTimeout(_ => tutorLock.classList.add('hidden'), 10)
+  document.querySelectorAll('.lock.top, .rotate-buttons').forEach(e => e.classList.add('blurred'))
+  document.querySelectorAll('.picks').forEach(e => e.classList.remove('blurred'))
+
+  let tutorPicks = createNode('div', {className: 'tutorial tutorpicks hidden'})
+
+  let tutorhead = createNode('h1', {innerText: texts.tutorpickshead})
+  tutorPicks.appendChild(tutorhead)
+
+  let tutorDesc = createNode('div')
+
+  let tutor1 = createNode('p', {innerText: texts.tutorpicks1})
+  tutorDesc.appendChild(tutor1)
+  let tutor2 = createNode('p', {innerText: texts.tutorpicks2})
+  tutorDesc.appendChild(tutor2)
+  tutorPicks.appendChild(tutorDesc)
+  tutorPicks.appendChild(tutorialButtons(tutorPicks, showTutorialPicksNext(tutorPicks, tutorDesc)))
+  setTimeout(_ => tutorPicks.classList.remove('hidden'), 10)
+  document.body.appendChild(tutorPicks)
+}
+
+const showTutorialPicksNext = (tutorPicks, tutorDesc) => _ => {
+  let tutor3 = createNode('p', {innerText: texts.tutorpicks3})
+  tutorDesc.appendChild(tutor3)
+  let tutor4 = createNode('p', {innerText: texts.tutorpicks4})
+  tutorDesc.appendChild(tutor4)
+  let tutor5 = createNode('p', {innerText: texts.tutorpicks5})
+  tutorDesc.appendChild(tutor5)
+  let f = (timeout, i = 0) => _ => {
+    if (t = tutorialMove[i] ?? null) {
+      state.commands[t[0]].method()
+      timeout.t = setTimeout(f(timeout, i + 1), t[1])
+    }
+  }
+  let timeout = {t: null}
+  timeout.t = f(timeout)()
+  tutorPicks.querySelector('.tutor-button').addEventListener('click', showTutorialSettings(tutorPicks, timeout), {once: true})
+}
+
+const showTutorialSettings = (tutorPicks, timeout) => _ => {
+  clearTimeout(timeout.t)
+  tutorPicks.addEventListener('transitionend', _ => tutorPicks.remove())
+  setTimeout(_ => tutorPicks.classList.add('hidden'), 10)
+  document.querySelectorAll('.lock.top, .rotate-buttons, .picks').forEach(e => e.classList.add('blurred'))
+  document.querySelectorAll('.header').forEach(e => e.classList.remove('blurred'))
+
+  let tutorSettings = createNode('div', {className: 'tutorial settings hidden'})
+  let tutorhead = createNode('h1', {innerText: texts.tutorsettingshead})
+  tutorSettings.appendChild(tutorhead)
+
+  let tutor1 = createNode('p', {innerText: texts.tutorsettings1})
+  tutorSettings.appendChild(tutor1)
+  let tutor2 = createNode('p', {innerText: texts.tutorsettings2})
+  tutorSettings.appendChild(tutor2)
+  let tutor3 = createNode('p', {innerText: texts.tutorsettings3})
+  tutorSettings.appendChild(tutor3)
+  let tutor4 = createNode('p', {innerText: texts.tutorsettings4})
+  tutorSettings.appendChild(tutor4)
+  let tutor5 = createNode('p', {innerText: texts.tutorsettings5})
+  tutorSettings.appendChild(tutor5)
+
+  tutorSettings.appendChild(tutorialButtons(tutorPicks, showTutorialEnd(tutorSettings)))
+
+  setTimeout(_ => tutorSettings.classList.remove('hidden'), 10)
+
+  document.body.appendChild(tutorSettings)
+}
+
+const showTutorialEnd = tutorSettings => _ => {
+  tutorSettings.addEventListener('transitionend', _ => tutorSettings.remove())
+  setTimeout(_ => tutorSettings.classList.add('hidden'), 10)
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.add('blurred'))
+  let tutor = createNode('div', {className: 'tutorial intro hidden'})
+  let tutorhead = createNode('h1', {innerText: texts.tutorendhead})
+  tutor.appendChild(tutorhead)
+
+  let tutor1 = createNode('p', {innerText: texts.tutorend1})
+  tutor.appendChild(tutor1)
+
+  let tutorbuttons = createNode('div', {className: 'tutorbuttons'})
+  let tutorskip = createNode('a', {className: 'tutor-link', innerText: texts.tutorend},
+    {
+      'click': [skipTutorial(tutor), {}]
+    }
+  )
+  tutorbuttons.appendChild(tutorskip)
+  tutor.appendChild(tutorbuttons)
+
+  setTimeout(_ => tutor.classList.remove('hidden'), 10)
+
+  document.body.appendChild(tutor)
+}
+
+const skipTutorial = tutor => _ => {
+  state.tutorialActive = false
+  localStorage.setItem("tutorSeen", true)
+  tutor.addEventListener('transitionend', _ => tutor.remove())
+  setTimeout(_ => tutor.classList.add('hidden'), 10)
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.remove('blurred'))
+  initGame()
 }
 
 const state = {}
@@ -472,11 +715,20 @@ window.addEventListener("load", _ => {
 
   document.querySelector('.bindings').addEventListener('click', showBindingPopup)
 
+  document.querySelector('#help').addEventListener('click', showTutorial)
+
   initGame()
+
+  if (!localStorage.getItem("tutorSeen")) {
+    setTimeout(showTutorial, 200)
+  }
 })
 
 window.addEventListener("keydown", event =>
   {
+    if (state.tutorialActive) {
+      return
+    }
     if (state.binding) {
       if (!config.keyNames[event.keyCode]) {
         applyBinding(event)

@@ -1,17 +1,26 @@
 :root {
-  --cyan: #9FBDB2;
-  --dark-cyan: #5C6E68;
-  --dark: #060508;
-  --success: #297D33;
-  --fail: #CA4646;
+  --cyan: rgba(159, 189, 178, 1);
+  --dark-cyan: rgba(92, 110, 104, 1);
+  --dark-cyan-semi: rgba(92, 110, 104, 0.7);
+  --dark: rgba(6, 5, 8, 1);
+  --dark-semi: rgba(6, 5, 8, 0.8);
+  --success: rgba(41, 125, 51, 1);
+  --fail: rgba(202, 70, 70, 1);
   --speed: .25s;
 }
 body {
   background: var(--dark);
-    font-family: sans-serif;
+  font-family: sans-serif;
+  padding: 0;
+  margin: 0;
 }
 .header {
   display: flex;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+  margin-top: 2em;
 }
 .settings {
   display: flex;
@@ -72,6 +81,15 @@ label {
 .game {
   padding: 2em;
   display: flex;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+  position: relative;
+}
+.blurred {
+  filter: blur(10px); 
+  opacity: 0.3;
 }
 .lock {
   position: relative;
@@ -81,7 +99,7 @@ label {
 .lock.top {
   width: 25em;
   height: 25em;
-  margin: 3em;
+  margin: 1em;
 }
 .lock-outer {
   display: inline-block;
@@ -155,7 +173,7 @@ label {
   background: var(--dark);
   border-width: 3px;
   border-color: var(--cyan);
-  border-style: dotted;
+  border-style: dashed;
   width: 90%;
   height: 90%;
   -webkit-transition: all var(--speed) ease-in-out;
@@ -170,6 +188,10 @@ label {
 .picks .lock-outer-circle, .pick > div > .lock-outer-circle.correct {
   border-color: var(--success);
   border-width: 5px;
+}
+.picks .lock-outer-circle.disabled {
+    opacity: 0.4;
+    cursor: default;
 }
 .lock-outer.pick > div {
   overflow: hidden;
@@ -198,8 +220,6 @@ label {
   width: 80%;
   height: 80%;
 }
-.pick-outer-circle {
-}
 .popup {
   position: absolute;
   left: 20%;
@@ -225,7 +245,7 @@ label {
   justify-content: space-around;
   padding: 1em 0;
 }
-button.popup-button, button#randomseed, button.rotate {
+button/*.popup-button, button#randomseed, button.rotate*/ {
   border: 1px solid var(--cyan);
   background: var(--cyan);
   padding: 0.8em 2em;
@@ -237,18 +257,21 @@ button.popup-button, button#randomseed, button.rotate {
   transition: all var(--speed) ease-in-out;
   color: var(--dark);
 }
+button:hover {
+  background: var(--dark-cyan);
+}
 .rotate-buttons {
   position: absolute;
-  width: 31em;
-  bottom: -5em;
+  width: 27em;
+  bottom: 0em;
   display: flex;
   justify-content: space-between;
 }
 button.rotate {
-  width: 2em;
+  width: 1.5em;
   padding: 0;
-  height: 2em;
-  font-size: 2.6em;
+  height: 1.5em;
+  font-size: 2.5em;
 }
 button#rotate_cw {
   right: 0;
@@ -316,8 +339,86 @@ input#seed::-webkit-inner-spin-button {
 input#seed::-webkit-inner-spin-button:hover {
   opacity: 1;
 }
-.number-arrow {
-  stroke: var(--cyan);
-  stroke-width: 2;
-  fill: none;
+.tutorial {
+  position: absolute;
+  opacity: 1;
+  background: var(--dark-cyan-semi);
+  z-index: 1;
+  display: flex;
+  padding: 3em;
+  flex-direction: column;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+  box-sizing: border-box;
+  border: 2px solid var(--dark-cyan);
+  border-radius: 3em;
+  margin: 1em;
+  box-shadow: 0px 1px 18px var(--dark-cyan);
+}
+.tutorial.hidden {
+  opacity: 0;
+}
+.tutorial h1 {
+  color: var(--cyan);
+  text-shadow: 0px 0px 6px var(--dark);
+  font-weight: normal;
+  font-size: 2.5em;
+  margin-top: 0;
+}
+.tutorial p {
+  color: var(--cyan);
+  text-shadow: 0 0 6px var(--dark);
+  font-size: 1.1em;
+  margin: 0.4em 0;
+}
+a.tutor-link {
+  color: var(--cyan);
+  text-shadow: 0 0 10px var(--dark);
+  text-decoration: underline;
+  font-size: 1.8em;
+  text-underline-offset: 0.15em;
+  text-decoration-thickness: 0.05em;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
+  margin-top: 1em;
+}
+a.tutor-link:hover {
+  text-shadow: 0 0 20px var(--dark);
+}
+.tutorbuttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+}
+.tutorial.intro {
+  top: 0;
+  height: 90%;
+  width: 60%;
+}
+.tutorial.tutorlock {
+  top: 0;
+  left: 30em;
+  width: 40em;
+}
+.tutorial.tutorpicks {
+  top: 12em;
+  width: 60em;
+  left: 20em;
+}
+.tutorial.settings {
+  top: 4em;
+  width: 60%;
+}
+button#help {
+  height: 2em;
+  font-size: 2em;
+  width: 2em;
+  padding: 0;
 }

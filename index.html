@@ -6,6 +6,15 @@
   <link rel="stylesheet" href="index_mobile.css">
 </head>
 <body>
+  <div class="game">
+    <div class="lock top"></div>
+    <div class="rotate-buttons">
+      <button class="rotate" id="rotate_ccw">&#10226;</button>
+      <button class="rotate" id="button_use">&#9094;</button>
+      <button class="rotate" id="rotate_cw">&#10227;</button>
+    </div>
+    <div class="picks"></div>
+  </div>
   <div class="header">
     <fieldset class="settings">
       <legend>Game settings</legend>
@@ -60,18 +69,12 @@
     <fieldset>
       <legend>Stats</legend>
       <div class="attempts">
-        <p>Picks left: </p><div class="picks-left"></div>
+        <p>Tries left: </p><div class="picks-left"></div>
+      </div>
+      <div>
+        <button id="help">?</button>
       </div>
     </fieldset>
-  </div>
-  <div class="game">
-    <div class="lock top"></div>
-    <div class="rotate-buttons">
-      <button class="rotate" id="rotate_ccw">&#10226;</button>
-      <button class="rotate" id="button_use">&#9094;</button>
-      <button class="rotate" id="rotate_cw">&#10227;</button>
-    </div>
-    <div class="picks"></div>
   </div>
 </body>
 </html>

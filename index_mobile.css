@@ -1,7 +1,9 @@
 @media screen and (max-width: 1279px) {
   body {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
   }
   .game {
     flex-direction: column;
@@ -55,5 +57,34 @@
   }
   .popup-close {
     font-size: 1.7em;
+  }
+  .attempts {
+    padding: 2vw;
+  }
+  .tutorial {
+    width: 92vw;
+    padding: 7vw;
+    border-radius: 6vw;
+  }
+  .tutorial h1 {
+    font-size: 7vw;
+  }
+  .tutorial.intro {
+    width: 92vw;
+  }
+  .tutorial.tutorlock {
+    left: 0;
+    top: 115vw;
+    width: 92vw;
+  }
+  .tutorial.tutorpicks {
+    top: 0;
+    left: 0;
+    width: 92vw;
+  }
+  .tutorial.settings {
+    top: 0;
+    left: 0;
+    width: 92vw;
   }
 }
