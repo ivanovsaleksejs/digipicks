@@ -88,7 +88,7 @@ label {
   position: relative;
 }
 .blurred {
-  filter: blur(10px); 
+  filter: blur(10px);
   opacity: 0.3;
 }
 .lock {
@@ -224,17 +224,21 @@ label {
   position: absolute;
   left: 20%;
   top: 20%;
-  background: var(--dark);
+  background: var(--dark-cyan);
   border: 1px solid var(--cyan);
   padding: 4em;
   border-radius: 0.5em;
   z-index: 2;
+  min-width: 20vw;
 }
 .popup-message {
-  color: var(--cyan);
-  margin: 1em 0;
   display: flex;
   align-items: center;
+}
+.popup-message p {
+  color: var(--cyan);
+  text-shadow: 0 0px 3px var(--dark);
+  margin: 1em 0;
 }
 .popup-icon {
   font-size: 2em;
@@ -242,8 +246,20 @@ label {
 }
 .popup-buttons {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   padding: 1em 0;
+}
+a.twitter-share-button {
+  margin: 0.6em 0;
+  text-decoration: none;
+  background-color: #1da1f2;
+  background-image: url(tweet.png);
+  padding: 0.3em 0.8em 0.3em 2.4em;
+  background-size: 2em;
+  background-repeat: no-repeat;
+  border-radius: 1.5em;
+  background-position: 0.3em center;
+  color: #FFFFFF;
 }
 button/*.popup-button, button#randomseed, button.rotate*/ {
   border: 1px solid var(--cyan);
@@ -291,15 +307,15 @@ button.popup-button:hover {
 .popup-close::after {
   content: "\2715";
 }
-.attempts {
+.stats > div {
   color: var(--cyan);
-  padding: 2em;
+  padding: 0.3em 1em;
   font-size: 1.5em;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.picks-left {
+#picks-left {
   border: 1px solid var(--dark-cyan);
   background: var(--cyan);
   color: var(--dark);
@@ -421,4 +437,7 @@ button#help {
   font-size: 2em;
   width: 2em;
   padding: 0;
+  position: fixed;
+  top: 2em;
+  right: 2em;
 }

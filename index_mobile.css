@@ -87,4 +87,8 @@
     left: 0;
     width: 92vw;
   }
+  button#help {
+    top: 3vw;
+    right: 3vw;
+  }
 }

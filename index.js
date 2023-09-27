@@ -177,7 +177,7 @@ const drawPicks = _ => {
   picksNode.querySelectorAll('.pick')[state.activePick].classList.add('active')
 }
 
-const generateGame = (seed, difficulty) => {
+const generateGame = difficulty => {
   let ringCount = difficulty > 1 ? difficulty : 2
   state.picks = []
   state.patterns = []
@@ -228,7 +228,7 @@ const redraw = _ => {
 
   drawPicks()
 
-  document.querySelector('.picks-left').innerText = state.pickCount
+  document.querySelector('#picks-left').innerText = state.pickCount
 }
 
 const drawPickAroundLock = _ => drawPick(state.picks[state.activePick])
@@ -297,7 +297,7 @@ const attemptPick = _ => {
     }
     else {
       state.pickCount--
-      document.querySelector('.picks-left').innerText = state.pickCount
+      document.querySelector('#picks-left').innerText = state.pickCount
       animateWrong()
       if (state.pickCount <= 0) {
         showLostMessage()
@@ -345,11 +345,22 @@ const showLostMessage = _ => {
 }
 
 const showSuccessMessage = _ => {
-  let picksUsed = config.pickCount[state.difficulty-1] - state.pickCount
-  let popup = openPopup("&#128578;", `Congratulations! Failed attempts: ${picksUsed}`, endgameButtons())
+  let mistakes = config.pickCount[state.difficulty-1] - state.pickCount
+  let time = convertTime()
+  let tweet = `I cracked the daily puzzle in ${time}` + (mistakes ? (` with ${mistakes} mistakes`) : ` without any mistake`) + ".\n "
+    + 'Can you beat my time?\n '
+    + 'https://ivanovsaleksejs.github.io/sfminigame/?daily=1'
+  let message = [
+    `<p>Congratulations!</p>`,
+    `<p>Mistakes: ${mistakes}</p>`,
+    `<p>Time: ${time}</p>`,
+    `<p>Share your result:</p>`,
+    `<a class="twitter-share-button" target="blank" href="https://twitter.com/intent/tweet/?text=${tweet}">Tweet</a>`
+  ]
+  let popup = openPopup("&#128578;", message.join(''), endgameButtons(true))
 }
 
-const endgameButtons = _ => {
+const endgameButtons = (won = false) => {
   let buttons = createNode('div', {className: 'popup-buttons'})
 
   let tryAgain = createNode('button', {className: 'popup-button', innerText: "Try again"},
@@ -376,34 +387,36 @@ const endgameButtons = _ => {
 }
 
 const openPopup = (sign, text, buttons) => {
-  let game = document.querySelector('.game')
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.add('blurred'))
   let popup = createNode('div', {className: 'popup'})
 
-  let popupClose = createNode('div', {className: 'popup-close'},
+  /*let popupClose = createNode('div', {className: 'popup-close'},
     {
       'click': [closePopup, {}]
     }
   )
-  popup.appendChild(popupClose)
-
-  let icon = createNode('div', {className: 'popup-icon', innerHTML: sign})
-
-  let textNode = createNode('div', {innerText: text})
-
+  popup.appendChild(popupClose)*/
   let message = createNode('div', {className: 'popup-message'})
-  message.appendChild(icon)
+
+  if (sign) {
+    let icon = createNode('div', {className: 'popup-icon', innerHTML: sign})
+    message.appendChild(icon)
+  }
+
+  let textNode = createNode('p', {innerHTML: text})
   message.appendChild(textNode)
   popup.appendChild(message)
 
   popup.appendChild(buttons)
 
-  game.appendChild(popup)
+  document.body.appendChild(popup)
   return popup
 }
 
 const closePopup = _ => {
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.remove('blurred'))
   state.binding = false
-  document.querySelector('.popup').remove()
+  document.querySelectorAll('.popup').forEach(e => e.remove())
 }
 
 const undo = _ => {
@@ -458,22 +471,46 @@ const applyBinding = event => {
   closePopup()
 }
 
-const initGame = _ => {
-  let seed = document.querySelector('#seed').value ?? 1
-  let difficulty = +[...document.querySelectorAll("[name=difficulty]")].find(r => r.checked).value ?? 0
+const convertTime = _ => {
+  let dateDiff = Date.now() - state.timeStart
+  let time = [(dateDiff / 3600000) % 24, (dateDiff / 60000) % 60, (dateDiff / 1000) % 60].map(x => (x>>>0).toString().padStart(2, '0'))
+  if (time[0] == '00') {
+    time.shift()
+  }
+  return time.join(':')
+}
+
+const updateTime = _ => {
+  document.querySelector('#time').innerHTML = convertTime()
+}
+
+const initGame = (pseed = null, pdifficulty = null, daily = null) => {
+  closePopup()
+  let seedField = document.querySelector('#seed')
+  state.daily = false
+  if (daily) {
+    state.daily = true
+    seedField.value = (rnd(Date.now() / 86400000 >>> 0))() * seedField.max >>> 0
+    document.querySelector('#master').checked = true
+  }
+  let seed = pseed ?? seedField.value
+  let difficulty = daily ? 4 : (pdifficulty ?? +[...document.querySelectorAll("[name=difficulty]")].find(r => r.checked).value ?? 1)
+
   state.difficulty = difficulty
   state.rand = rnd(seed)
   state.activePick = 0
-  state.pickCount = config.pickCount[difficulty-1]
-  document.querySelector('.picks-left').innerText = state.pickCount
+  state.pickCount = config.pickCount[difficulty - 1]
+  document.querySelector('#picks-left').innerText = state.pickCount
+
   state.history = []
-  generateGame(seed, difficulty)
+  generateGame(difficulty)
   redraw()
+  state.timeStart = Date.now()
+  state.timerInterval = setInterval(updateTime, 100);
 }
 
 const clickOnPick = e => {
   let target = e.target
-  
   while (!target.classList.contains('pick')) {
     if (target.classList.contains('picks')) {
       return
@@ -698,14 +735,14 @@ window.addEventListener("load", _ => {
     }
   }
 
-  document.querySelector('#seed').addEventListener('change', initGame)
-  document.querySelector('fieldset').addEventListener('change', initGame)
+  document.querySelector('.settings').addEventListener('change', initGame.bind(null, null, null, null))
 
   document.querySelector('#randomseed').addEventListener('click', _ => {
     let seedInput = document.querySelector('#seed')
     seedInput.value = (Math.random() * seedInput.max) >>> 0
     initGame()
   })
+  document.querySelector('#daily').addEventListener('click', initGame.bind(null, null, null, 1))
 
   document.querySelector('#rotate_ccw').addEventListener('click', state.commands.rccw.method)
   document.querySelector('#rotate_cw').addEventListener('click', state.commands.rcw.method)
@@ -717,7 +754,11 @@ window.addEventListener("load", _ => {
 
   document.querySelector('#help').addEventListener('click', showTutorial)
 
-  initGame()
+  let urlParams = [...(new URLSearchParams(window.location.search))]
+  let params = {seed: null, difficulty: null, daily: null}
+  urlParams.map(p => params[p[0]] = +p[1])
+
+  initGame(params.seed, params.difficulty, params.daily)
 
   if (!localStorage.getItem("tutorSeen")) {
     setTimeout(showTutorial, 200)
