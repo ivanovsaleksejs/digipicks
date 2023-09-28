@@ -25,9 +25,6 @@
     width: 30vw;
     height: 30vw;
   }
-  .picks .lock-outer-circle, .pick > div > .lock-outer-circle {
-    border-width: 5px;
-  }
   .bindings {
     display: none;
   }
