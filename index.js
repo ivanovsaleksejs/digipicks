@@ -233,13 +233,24 @@ const redraw = _ => {
 
 const drawPickAroundLock = _ => drawPick(state.picks[state.activePick])
 
+const rotateSegment = direction => p => {
+  let s = p.style.transform
+  let d = direction ? -22.75 : 22.75
+  let r = +s.match(/rotate\((-?\d*\.?\d*)/)[1] + d
+  p.style.transform = s.replace(/rotate\((-?\d*\.?\d*)/, 'rotate(' + r.toFixed(2))
+}
+
 const rotateActivePick = direction => {
   let rotation = state.picks[state.activePick].rotation
   rotation += direction ? 1 : (-1)
   rotation = rotation == 16 ? 0  : rotation
   rotation = rotation == -1 ? 15 : rotation
   state.picks[state.activePick].rotation = rotation
-  redraw()
+  let selectors = [
+    `.picks > div:nth-child(${state.activePick+1}) .segment`,
+    `.lock.top .lock-outer.pick > div > .lock-outer-circle > .segment`
+  ]
+  document.querySelectorAll(selectors.join()).forEach(rotateSegment(direction))
 }
 
 const browsePicks = direction => {
@@ -347,27 +358,29 @@ const showLostMessage = _ => {
 const showSuccessMessage = _ => {
   let mistakes = config.pickCount[state.difficulty-1] - state.pickCount
   let time = convertTime()
-  let tweet = `I cracked the daily puzzle in ${time}` + (mistakes ? (` with ${mistakes} mistakes`) : ` without any mistake`) + ".\n "
-    + 'Can you beat my time?\n '
-    + 'https://ivanovsaleksejs.github.io/sfminigame/?daily=1'
   let message = [
     `<p>Congratulations!</p>`,
     `<p>Mistakes: ${mistakes}</p>`,
-    `<p>Time: ${time}</p>`,
-    `<p>Share your result:</p>`,
-    `<a class="twitter-share-button" target="blank" href="https://twitter.com/intent/tweet/?text=${tweet}">Tweet</a>`
+    `<p>Time: ${time}</p>`
   ]
-  let popup = openPopup("&#128578;", message.join(''), endgameButtons(true))
+  if (state.daily) {
+    let tweet = `I cracked the daily puzzle in ${time}` + (mistakes ? (` with ${mistakes} mistakes`) : ` without any mistake`) + ".\n "
+      + 'Can you beat my time?\n '
+      + 'https://ivanovsaleksejs.github.io/sfminigame/?daily=1'
+    message.push(`<p>Share your result:</p>`)
+    message.push(`<a class="twitter-share-button" target="blank" href="https://twitter.com/intent/tweet/?text=${tweet}">Tweet</a>`)
+  }
+  let popup = openPopup("&#128578;", message.join(''), endgameButtons(true, true))
 }
 
-const endgameButtons = (won = false) => {
+const endgameButtons = (won = false, daily = false) => {
   let buttons = createNode('div', {className: 'popup-buttons'})
 
   let tryAgain = createNode('button', {className: 'popup-button', innerText: "Try again"},
     {
       'click': [_ => {
         closePopup()
-        initGame()
+        initGame(null, null, 1)
       }, {}]
     }
   )
@@ -747,6 +760,7 @@ window.addEventListener("load", _ => {
   document.querySelector('#rotate_ccw').addEventListener('click', state.commands.rccw.method)
   document.querySelector('#rotate_cw').addEventListener('click', state.commands.rcw.method)
   document.querySelector('#button_use').addEventListener('click', state.commands.use.method)
+  document.querySelector('#button_undo').addEventListener('click', state.commands.undo.method)
 
   document.querySelector('.picks').addEventListener('click', clickOnPick)
 

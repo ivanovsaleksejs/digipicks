@@ -130,6 +130,10 @@ label {
   height: 100vw;
   background: var(--dark);
   transform-origin: 0 0;
+  -webkit-transition: all var(--speed) ease-in-out;
+  -moz-transition: all var(--speed) ease-in-out;
+  -o-transition: all var(--speed) ease-in-out;
+  transition: all var(--speed) ease-in-out;
   z-index: 0;
 }
 .lock-inner {
@@ -190,8 +194,8 @@ label {
   border-width: 5px;
 }
 .picks .lock-outer-circle.disabled {
-    opacity: 0.4;
-    cursor: default;
+  opacity: 0.4;
+  cursor: default;
 }
 .lock-outer.pick > div {
   overflow: hidden;
@@ -291,6 +295,10 @@ button.rotate {
 }
 button#rotate_cw {
   right: 0;
+}
+button#button_undo {
+  position: fixed;
+  top: 1em;
 }
 button.popup-button:hover {
   background: var(--dark-cyan);
