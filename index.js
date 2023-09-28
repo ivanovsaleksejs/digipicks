@@ -608,6 +608,7 @@ const showTutorialLockPick = (tutorLock, tutorDesc) => _ => {
   }
   let timeout = {t: null}
   timeout.t = f(timeout)()
+  tutorLock.querySelector('.tutor-link').addEventListener('click', _ => clearTimeout(timeout.t))
   tutorLock.querySelector('.tutor-button').addEventListener('click', showTutorialPicks(tutorLock, timeout), {once: true})
 }
 
@@ -650,6 +651,7 @@ const showTutorialPicksNext = (tutorPicks, tutorDesc) => _ => {
   }
   let timeout = {t: null}
   timeout.t = f(timeout)()
+  tutorPicks.querySelector('.tutor-link').addEventListener('click', _ => clearTimeout(timeout.t))
   tutorPicks.querySelector('.tutor-button').addEventListener('click', showTutorialSettings(tutorPicks, timeout), {once: true})
 }
 
