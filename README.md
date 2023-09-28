@@ -12,6 +12,10 @@ Picks are shuffled and rotated randomly. You are able to bbrowse picks with keyb
 
 Each layer requires at least two picks to unlock it. Once you unlocked the top layer, you get an access to the next layer and so on, until you unlock them all.
 
+
+https://github.com/ivanovsaleksejs/digipicks/assets/1484549/1bf57fde-ab15-4f12-a173-c8f24f750519
+
+
 You can only use each pick once, after that it becomes unavailable. So, make sure you've found all picks for the layer before using them.
 
 It's also possible that you've used a pick that was meant for another layer earlier in the game. This will block you from unlocking all layers. In that case, you can go back as many steps as you want.
