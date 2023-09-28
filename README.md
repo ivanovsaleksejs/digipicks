@@ -2,6 +2,10 @@
 
 A game based on the lockpicking minigame in Starfield, an action role-playing game developed by Bethesda Game Studios.
 
+
+https://github.com/ivanovsaleksejs/digipicks/assets/1484549/1bf57fde-ab15-4f12-a173-c8f24f750519
+
+
 A playable version can be found [here](https://ivanovsaleksejs.github.io/digipicks).
 
 ## Rules
@@ -11,10 +15,6 @@ The aim of the game is to unlock all layers with the provided picks. Layers are 
 Picks are shuffled and rotated randomly. You can browse picks with the keyboard or by simply clicking on them, and you can rotate each pick to fit with the gaps.
 
 Each layer requires at least two picks to unlock it. Once you've unlocked the top layer, you gain access to the next layer, and so on, until you unlock them all.
-
-
-https://github.com/ivanovsaleksejs/digipicks/assets/1484549/1bf57fde-ab15-4f12-a173-c8f24f750519
-
 
 You can only use each pick once; after that, it becomes unavailable. So, make sure you've found all the picks for the layer before using them.
 
