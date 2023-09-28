@@ -114,12 +114,12 @@ const createNode = (name = 'div', props = {}, listeners = {}) => {
 }
 
 const addSegments = (lock, pattern, isPick = false) => {
-  let skew = [79.75, 84][+isPick]
-  let offset = [22.5, 22.75][+isPick]
+  let skew = [79.75, 85][+isPick]
+  let offset = 22.5
   for (let i in pattern) {
     if (pattern[i]) {
       let node = createNode('div', {className: 'segment'})
-      node.style.transform = `rotate(${(offset * i).toFixed(2)}deg) skew(${skew.toFixed(2)}deg)`
+      node.style.transform = `rotate(${(offset * i + isPick * 2.5).toFixed(2)}deg) skew(${skew.toFixed(2)}deg)`
       lock.appendChild(node)
     }
   }
@@ -235,7 +235,7 @@ const drawPickAroundLock = _ => drawPick(state.picks[state.activePick])
 
 const rotateSegment = direction => p => {
   let s = p.style.transform
-  let d = direction ? -22.75 : 22.75
+  let d = direction ? -22.5 : 22.5
   let r = +s.match(/rotate\((-?\d*\.?\d*)/)[1] + d
   p.style.transform = s.replace(/rotate\((-?\d*\.?\d*)/, 'rotate(' + r.toFixed(2))
 }
