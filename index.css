@@ -20,7 +20,7 @@ body {
   -moz-transition: all var(--speed) ease-in-out;
   -o-transition: all var(--speed) ease-in-out;
   transition: all var(--speed) ease-in-out;
-  margin-top: 2em;
+  margin: 2em 0 0 0.3em;
 }
 .settings {
   display: flex;
