@@ -299,6 +299,7 @@ button#rotate_cw {
 button#button_undo {
   position: fixed;
   top: 1em;
+  left: 1em;
 }
 button.popup-button:hover {
   background: var(--dark-cyan);

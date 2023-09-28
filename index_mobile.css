@@ -91,4 +91,8 @@
     top: 3vw;
     right: 3vw;
   }
+  button#button_undo {
+    top: 3vw;
+    left: 3vw;
+  }
 }
