@@ -7,6 +7,14 @@
   --success: rgba(41, 125, 51, 1);
   --fail: rgba(202, 70, 70, 1);
   --speed: .25s;
+  --ultra-speed: .05s;
+}
+[tooltip] {
+  pointer-events: none;
+}
+[tooltip]:before, [tooltip]:after
+{
+  display: none;
 }
 body {
   background: var(--dark);
@@ -449,4 +457,21 @@ button#help {
   position: fixed;
   top: 1em;
   left: 10em;
+}
+.tooltip {
+  opacity: 0;
+  position: absolute;
+  background: var(--cyan);
+  color: var(--dark);
+  font-size: 1.1em;
+  padding: 0.2em 0.2em 0.2em 0.7em;
+  border-radius: 0.2em;
+  z-index: 2;
+  -webkit-transition: all var(--ultra-speed) ease-in-out;
+  -moz-transition: all var(--ultra-speed) ease-in-out;
+  -o-transition: all var(--ultra-speed) ease-in-out;
+  transition: all var(--ultra-speed) ease-in-out;
+}
+.tooltip.visible {
+  opacity: 1;
 }

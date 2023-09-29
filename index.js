@@ -400,7 +400,7 @@ const endgameButtons = (won = false, daily = false) => {
 }
 
 const openPopup = (sign, text, buttons) => {
-  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.add('blurred'))
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks, #help').forEach(e => e.classList.add('blurred'))
   let popup = createNode('div', {className: 'popup'})
 
   /*let popupClose = createNode('div', {className: 'popup-close'},
@@ -427,7 +427,7 @@ const openPopup = (sign, text, buttons) => {
 }
 
 const closePopup = _ => {
-  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.remove('blurred'))
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks, #help').forEach(e => e.classList.remove('blurred'))
   state.binding = false
   document.querySelectorAll('.popup').forEach(e => e.remove())
 }
@@ -557,7 +557,7 @@ const tutorialButtons = (tutor, nextPhase) => {
 
 const showTutorial = _ => {
   state.tutorialActive = true
-  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks').forEach(e => e.classList.add('blurred'))
+  document.querySelectorAll('.header, .lock.top, .rotate-buttons, .picks, #help').forEach(e => e.classList.add('blurred'))
   let tutor = createNode('div', {className: 'tutorial intro hidden'})
   let tutorhead = createNode('h1', {innerText: texts.tutorhead})
   tutor.appendChild(tutorhead)
@@ -576,7 +576,7 @@ const showTutorial = _ => {
 const showTutorialLock = tutor => _ => {
   tutor.addEventListener('transitionend', _ => tutor.remove())
   setTimeout(_ => tutor.classList.add('hidden'), 10)
-  document.querySelectorAll('.lock.top, .rotate-buttons').forEach(e => e.classList.remove('blurred'))
+  document.querySelectorAll('.lock.top, .rotate-buttons, #help').forEach(e => e.classList.remove('blurred'))
 
   let tutorLock = createNode('div', {className: 'tutorial tutorlock hidden'})
 
@@ -616,7 +616,7 @@ const showTutorialPicks = (tutorLock, timeout) => _ => {
   clearTimeout(timeout.t)
   tutorLock.addEventListener('transitionend', _ => tutorLock.remove())
   setTimeout(_ => tutorLock.classList.add('hidden'), 10)
-  document.querySelectorAll('.lock.top, .rotate-buttons').forEach(e => e.classList.add('blurred'))
+  document.querySelectorAll('.lock.top, .rotate-buttons, #help').forEach(e => e.classList.add('blurred'))
   document.querySelectorAll('.picks').forEach(e => e.classList.remove('blurred'))
 
   let tutorPicks = createNode('div', {className: 'tutorial tutorpicks hidden'})
@@ -718,6 +718,30 @@ const skipTutorial = tutor => _ => {
   initGame()
 }
 
+const showTooltip = move => event => {
+  if (title = event.target.dataset.title) {
+    let tooltip = createNode('div', {
+      className: "tooltip",
+      innerText: event.target.dataset.title,
+      style: `top: ${event.pageY}; left: ${event.pageX};`
+    }
+    )
+    event.target.addEventListener('mousemove', e => {
+      tooltip.style = `top: ${e.pageY}; left: ${e.pageX};`
+    })
+    event.target.addEventListener('mouseout', e =>
+      {
+        tooltip.addEventListener('transitionend', _ => {
+          tooltip.remove()
+        })
+        setTimeout(_ => tooltip.classList.remove('visible'), 50)
+      }, {once: true}
+    )
+    document.body.appendChild(tooltip)
+    setTimeout(_ => tooltip.classList.add('visible'), 10)
+  }
+}
+
 const state = {}
 
 window.addEventListener("load", _ => {
@@ -763,6 +787,7 @@ window.addEventListener("load", _ => {
   document.querySelector('#rotate_cw').addEventListener('click', state.commands.rcw.method)
   document.querySelector('#button_use').addEventListener('click', state.commands.use.method)
   document.querySelector('#button_undo').addEventListener('click', state.commands.undo.method)
+  document.querySelectorAll('button').forEach(e => e.addEventListener('mouseover', showTooltip(false)))
 
   document.querySelector('.picks').addEventListener('click', clickOnPick)
 
