@@ -723,11 +723,11 @@ const showTooltip = move => event => {
     let tooltip = createNode('div', {
       className: "tooltip",
       innerText: event.target.dataset.title,
-      style: `top: ${event.pageY}; left: ${event.pageX};`
+      style: `top: ${event.pageY}; left: ${event.pageX+10};`
     }
     )
     event.target.addEventListener('mousemove', e => {
-      tooltip.style = `top: ${e.pageY}; left: ${e.pageX};`
+      tooltip.style = `top: ${e.pageY}; left: ${e.pageX+10};`
     })
     event.target.addEventListener('mouseout', e =>
       {
